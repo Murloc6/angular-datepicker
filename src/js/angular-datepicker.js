@@ -390,7 +390,8 @@
           //reinit days
           setDaysInMonth($scope.monthNumber, $scope.year);
           //deactivate selected day
-          $scope.day = undefined;
+          $scope.day = 1;
+          setInputValue();
         };
 
         $scope.willPrevMonthBeSelectable = function willPrevMonthBeSelectable() {
@@ -464,7 +465,8 @@
           //reinit days
           setDaysInMonth($scope.monthNumber, $scope.year);
           //deactivate selected day
-          $scope.day = undefined;
+          $scope.day = 1;
+          setInputValue();
         };
 
         $scope.selectedMonthHandle = function manageSelectedMonthHandle(selectedMonthNumber) {
@@ -498,6 +500,18 @@
           }
 
           $scope.year = Number(year);
+
+          //KL
+          if (!$scope.monthNumber) {
+              $scope.monthNumber = 1;
+              setInputValue();
+          }
+
+          if (!$scope.day) {
+              $scope.day = Number(1);
+              setInputValue();
+          }
+
           setDaysInMonth($scope.monthNumber, $scope.year);
           $scope.paginateYears(year);
           $scope.showYearsPagination = false;
