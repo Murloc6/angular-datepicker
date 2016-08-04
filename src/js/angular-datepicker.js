@@ -15,7 +15,7 @@
         navigator.userAgent.match(/BlackBerry/i) ||
         navigator.userAgent.match(/Windows Phone/i))) {
 
-        return true;
+        return false;
       }
     }())
     , generateMonthAndYearHeader = function generateMonthAndYearHeader(prevButton, nextButton) {
@@ -105,7 +105,7 @@
           '<a href="javascript:void(0)" ng-repeat="px in prevMonthDays" class="_720kb-datepicker-calendar-day _720kb-datepicker-disabled">',
             '{{px}}',
           '</a>',
-          '<a href="javascript:void(0)" ng-repeat="item in days" ng-click="setDatepickerDay(item)" ng-class="{\'_720kb-datepicker-active\': day === item, \'_720kb-datepicker-disabled\': !isSelectableMinDate(year + \'/\' + monthNumber + \'/\' + item ) || !isSelectableMaxDate(year + \'/\' + monthNumber + \'/\' + item) || !isSelectableDate(monthNumber, year, item)}" class="_720kb-datepicker-calendar-day">',
+          '<a href="javascript:void(0)" ng-repeat="item in days" ng-click="datepickerShow = false;setDatepickerDay(item);" ng-class="{\'_720kb-datepicker-active\': day === item, \'_720kb-datepicker-disabled\': !isSelectableMinDate(year + \'/\' + monthNumber + \'/\' + item ) || !isSelectableMaxDate(year + \'/\' + monthNumber + \'/\' + item) || !isSelectableDate(monthNumber, year, item)}" class="_720kb-datepicker-calendar-day">',
             '{{item}}',
           '</a>',
           '<a href="javascript:void(0)" ng-repeat="nx in nextMonthDays" class="_720kb-datepicker-calendar-day _720kb-datepicker-disabled">',
@@ -136,7 +136,7 @@
 
       return toReturn.join('');
     }
-    , datepickerDirective = function datepickerDirective($window, $compile, $locale, $filter, $interpolate) {
+    , datepickerDirective = function datepickerDirective($window, $compile, $locale, $filter, $interpolate, $log) {
 
       var linkingFunction = function linkingFunction($scope, element, attr) {
 
@@ -168,7 +168,7 @@
             }
           }
           , resetToMinDate = function resetToMinDate() {
-
+            $log.debug('Debug resetToMinDate : ', $scope.dateMinLimit);
             $scope.month = $filter('date')(new Date($scope.dateMinLimit), 'MMMM');
             $scope.monthNumber = Number($filter('date')(new Date($scope.dateMinLimit), 'MM'));
             $scope.day = Number($filter('date')(new Date($scope.dateMinLimit), 'dd'));
@@ -286,8 +286,8 @@
 
             var i
               , limitDate = new Date(year, month, 0).getDate()
-              , firstDayMonthNumber = new Date(year + '/' + month + '/' + 1).getDay()
-              , lastDayMonthNumber = new Date(year + '/' + month + '/' + limitDate).getDay()
+              , firstDayMonthNumber = (new Date(year + '/' + month + '/' + 1).getDay() + 6) % 7
+              , lastDayMonthNumber = (new Date(year + '/' + month + '/' + limitDate).getDay() + 6) % 7
               , prevMonthDays = []
               , nextMonthDays = []
               , howManyNextDays
@@ -456,7 +456,7 @@
           if ($scope.dateMinLimit) {
 
             if (!$scope.isSelectableMinDate($scope.year + '/' + $scope.monthNumber + '/' + $scope.days[$scope.days.length - 1])) {
-
+              $log.debug('Coucou : ', $scope.days);
               resetToMinDate();
             }
           }
@@ -501,15 +501,15 @@
 
           $scope.year = Number(year);
 
-          //KL
+          //kL
           if (!$scope.monthNumber) {
-              $scope.monthNumber = 1;
-              setInputValue();
+            $scope.monthNumber = 1;
+            setInputValue();
           }
 
           if (!$scope.day) {
-              $scope.day = Number(1);
-              setInputValue();
+            $scope.day = Number(1);
+            setInputValue();
           }
 
           setDaysInMonth($scope.monthNumber, $scope.year);
@@ -538,7 +538,6 @@
             if (attr.hasOwnProperty('dateRefocus')) {
               thisInput[0].focus();
             }
-
             $scope.hideCalendar();
           }
         };
@@ -717,7 +716,7 @@
         $scope.months = datetime.MONTH;
         $scope.daysInString = ['0', '1', '2', '3', '4', '5', '6'].map(function mappingFunc(el) {
 
-          return $filter('date')(new Date(new Date('06/08/2014').valueOf() + A_DAY_IN_MILLISECONDS * el), 'EEE');
+          return $filter('date')(new Date(new Date('06/09/2014').valueOf() + A_DAY_IN_MILLISECONDS * el), 'EEE');
         });
 
         //create the calendar holder and append where needed
@@ -843,5 +842,5 @@
     };
 
   angular.module('720kb.datepicker', [])
-               .directive('datepicker', ['$window', '$compile', '$locale', '$filter', '$interpolate', datepickerDirective]);
+               .directive('datepicker', ['$window', '$compile', '$locale', '$filter', '$interpolate', '$log', datepickerDirective]);
 }(angular, navigator));
