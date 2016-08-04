@@ -217,10 +217,14 @@ Then your final html:
 </div>
 ```
 
-
 ### Example
 
 [Live demo](https://720kb.github.io/angular-datepicker)
+
+
+##Murloc6's modifications
+*Remove the responsive version of this app
+*Set monday to the first day of the week
 
 ##Themes :art:
 You can edit the default Css file `angular-datepicker.css` if you want to make a new theme for the datepicker, then just add it to the ```themes``` dir and PR!
